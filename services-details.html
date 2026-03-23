@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Details - VintageMart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/jpeg" href="images\vector-design-vintage-shop-icon-style_822882-413394.avif">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === RESET & CORE === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        /* === THEME VARIABLES (Vintage: Warm Cream, Charcoal, Gold) === */
+        :root {
+            --bg-color: #FAFAF7;
+            --bg-secondary: #F0EFEA; 
+            --bg-card: #FFFFFF; 
+            --text-main: #2C2A29;
+            --text-muted: #6B655F;
+            --accent-color: #B8860B; /* Dark Goldenrod */
+            --accent-dark: #8B6508; 
+            --border-color: #E6E4DD;
+            --nav-bg: rgba(250, 250, 247, 0.95);
+            --drawer-bg: #FAFAF7;
+            --drawer-text: #2C2A29;
+            --menu-hover-bg: rgba(184, 134, 11, 0.05); 
+        }
+
+        /* DARK MODE */
+        body.dark-mode {
+            --bg-color: #1A1918; 
+            --bg-secondary: #242220; 
+            --bg-card: #242220; 
+            --text-main: #EAE8E3; 
+            --text-muted: #A39E98;
+            --accent-color: #D4AF37; /* Metallic Gold */
+            --accent-dark: #B8860B; 
+            --border-color: #383532;
+            --nav-bg: rgba(26, 25, 24, 0.95);
+            --drawer-bg: #1A1918;
+            --drawer-text: #EAE8E3;
+            --menu-hover-bg: rgba(212, 175, 55, 0.1); 
+        }
+
+        /* RTL SUPPORT */
+        [dir="rtl"] { text-align: right; }
+        [dir="rtl"] .ml-auto { margin-right: auto; margin-left: 0; }
+        [dir="rtl"] .mr-auto { margin-left: auto; margin-right: 0; }
+        [dir="rtl"] .pl-4 { padding-right: 1rem; padding-left: 0; }
+        [dir="rtl"] .fa-arrow-right { transform: rotate(180deg); }
+        [dir="rtl"] .side-drawer { right: auto; left: 0; transform: translateX(-100%); border-left: none; border-right: 1px solid var(--border-color); }
+
+        /* === ANIMATIONS & UTILITIES === */
+        @keyframes subtleZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        .animate-zoom {
+            animation: subtleZoom 25s infinite alternate ease-in-out;
+        }
+
+        /* === NAVBAR DESIGN === */
+        .navbar { 
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-bottom: 4px double var(--border-color); 
+            padding: 16px 0; transition: all 0.3s ease;
+        }
+        
+        .nav-link { 
+            position: relative;
+            padding: 4px 0; 
+            margin: 0 12px;
+            color: var(--text-main); 
+            text-decoration: none; 
+            font-size: 12px; 
+            font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; transition: color 0.3s ease; 
+            display: inline-flex; align-items: center; gap: 6px; cursor: pointer; 
+        }
+        @media (min-width: 1440px) {
+            .nav-link { margin: 0 16px; font-size: 13px; }
+        }
+        
+        .nav-link::after {
+            content: ''; position: absolute; bottom: 0; left: 0; 
+            width: 0%; height: 2px; background-color: var(--accent-color); 
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-link:hover { color: var(--accent-color); background: transparent; }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link.active { color: var(--accent-color); background: transparent; }
+        
+        .dropdown { position: relative; display: flex; align-items: center; height: 100%; }
+        .dropdown-menu { 
+            position: absolute; top: 100%; left: 0; transform: translateY(15px); 
+            margin-top: 10px; opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 100; 
+        }
+        .dropdown-inner { 
+            background: var(--bg-card); border: 1px solid var(--border-color); 
+            border-top: 3px solid var(--accent-color); border-radius: 0; 
+            min-width: 200px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 12px 0; 
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .dropdown-item { 
+            display: block; padding: 10px 20px; 
+            color: var(--text-main); text-decoration: none; font-size: 12px; font-weight: 600; 
+            transition: all 0.2s; text-align: left; white-space: nowrap; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .dropdown-item:hover { 
+            background: var(--bg-secondary); color: var(--accent-color); padding-left: 24px;
+        }
+        [dir="rtl"] .dropdown-item:hover { padding-left: 20px; padding-right: 24px; }
+
+        /* PILL TOGGLES */
+        .theme-toggle-pill { width: 48px; height: 24px; background: var(--bg-secondary); border-radius: 20px; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; border: 1px solid var(--border-color); }
+        .theme-toggle-pill i { font-size: 10px; z-index: 1; }
+        .theme-toggle-pill .fa-sun { color: var(--accent-color); }
+        .theme-toggle-pill .fa-moon { color: #999; }
+        .theme-toggle-pill .thumb { position: absolute; top: 1px; left: 1px; width: 20px; height: 20px; background: var(--bg-card); border-radius: 50%; transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid var(--border-color); z-index: 2; }
+        body.dark-mode .theme-toggle-pill .thumb { transform: translateX(24px); }
+
+        /* BUTTONS */
+        .btn { padding: 12px 28px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 0; } 
+        .btn-solid { background: var(--accent-color); color: #FFFFFF !important; border: 1px solid var(--accent-color); }
+        .btn-solid:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+        .btn-outline { border: 1px solid var(--text-main); color: var(--text-main); background: transparent; }
+        .btn-outline:hover { background: var(--text-main); color: var(--bg-color); }
+
+        /* === SIDE-DRAWER MENU === */
+        .side-drawer { 
+            position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 400px;
+            background: var(--drawer-bg); border-left: 1px solid var(--border-color);
+            z-index: 1001; display: flex; flex-direction: column; color: var(--drawer-text); 
+            opacity: 0; visibility: hidden; transform: translateX(100%); 
+            transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1); box-shadow: -15px 0 40px rgba(0,0,0,0.1);
+        }
+        .side-drawer.active { opacity: 1; visibility: visible; transform: translateX(0); }
+        [dir="rtl"] .side-drawer.active { transform: translateX(0); }
+
+        .drawer-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(3px);
+        }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+        
+        .mobile-link { 
+            display: block; width: 100%; padding: 16px 0;
+            font-size: 1rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; 
+            color: var(--text-main); text-decoration: none; transition: all 0.3s; 
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .mobile-link:hover { color: var(--accent-color); padding-left: 10px; }
+        [dir="rtl"] .mobile-link:hover { padding-left: 0; padding-right: 10px; }
+
+        /* FOOTER */
+        footer { background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding-top: 80px; }
+        footer h4 { color: var(--text-main); font-weight: 800; font-size: 1.1rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px;} 
+        footer a, footer li, footer span { color: var(--text-muted); text-decoration: none; transition: all 0.3s; font-size: 0.95rem; }
+        footer a:hover { color: var(--accent-color); }
+        .social-link-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; transition: all 0.3s; color: var(--text-main); background: var(--bg-card); }
+        .social-link-circle:hover { background: var(--accent-color); color: #FFFFFF; border-color: var(--accent-color); transform: translateY(-3px); }
+        .footer-bottom { border-top: 1px solid var(--border-color); padding: 24px 0; margin-top: 60px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-4">
+            
+            <div class="flex items-center shrink-0">
+                <a href="index.html" class="text-2xl lg:text-3xl font-black tracking-tighter" style="color: var(--accent-color); text-decoration: none; font-family: serif;">
+                    VintageMart
+                </a>
+            </div>
+            
+            <div class="hidden xl:flex flex-1 justify-center items-center">
+                <div class="dropdown">
+                    <div class="nav-link">Home <i class="fas fa-chevron-down text-[8px] ml-1"></i></div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-inner">
+                            <a href="index.html" class="dropdown-item">Home Page 1</a>
+                            <a href="home-2.html" class="dropdown-item">Home Page 2</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="gallery.html" class="nav-link">Gallery</a>
+                <a href="services.html" class="nav-link active">Services</a>
+                <a href="pricing.html" class="nav-link">Pricing</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <a href="faq.html" class="nav-link">FAQ</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+
+            <div class="hidden xl:flex items-center justify-end shrink-0 gap-4">
+                <div class="flex items-center gap-3">
+                    <a href="login.html" class="btn btn-outline !py-2 !px-5">Login</a>
+                    <a href="register.html" class="btn btn-solid !py-2 !px-5">Register</a> 
+                </div>
+                
+                <div class="w-px h-6 bg-[var(--border-color)] mx-2"></div>
+                
+                <div class="flex items-center gap-3">
+                    <button id="rtl-btn" class="text-[10px] font-bold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all uppercase tracking-widest border border-[var(--border-color)] px-2.5 py-1 hover:border-[var(--text-main)]">RTL</button>
+                    
+                    <div id="theme-toggle-desktop" class="theme-toggle-pill" title="Toggle Dark Mode">
+                        <i class="fas fa-sun"></i><i class="fas fa-moon"></i><div class="thumb"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="xl:hidden flex items-center justify-end w-auto">
+                <button id="mobile-btn" class="w-10 h-10 bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-main)] hover:text-[var(--accent-color)] hover:border-[var(--accent-color)] transition-all">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <div class="side-drawer" id="fullscreen-menu">
+        <div class="w-full px-8 py-6 flex justify-between items-center border-b border-[var(--border-color)] shrink-0">
+            <a href="index.html" class="text-2xl lg:text-3xl font-black tracking-tighter" style="color: var(--accent-color); text-decoration: none; font-family: serif;">
+                VintageMart
+            </a>
+            <button id="close-menu" class="w-8 h-8 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--accent-color)] transition-all text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="flex flex-col items-start justify-start px-8 py-8 w-full overflow-y-auto flex-1">
+            <a href="index.html" class="mobile-link">Home Page 1</a>
+            <a href="home-2.html" class="mobile-link">Home Page 2</a>
+            <a href="about.html" class="mobile-link">About</a>
+            <a href="gallery.html" class="mobile-link">Gallery</a>
+            <a href="services.html" class="mobile-link" style="color: var(--accent-color); border-top: 1px dashed var(--border-color);">Services</a>
+            <a href="pricing.html" class="mobile-link">Pricing</a>
+            <a href="blog.html" class="mobile-link">Blog</a>
+            <a href="faq.html" class="mobile-link">FAQ</a>
+            <a href="contact.html" class="mobile-link">Contact</a>
+        </div>
+
+        <div class="w-full px-8 py-6 bg-[var(--bg-secondary)] border-t border-[var(--border-color)] flex flex-col gap-5 shrink-0">
+            <div class="flex justify-between items-center w-full">
+                <div class="flex items-center gap-3">
+                    <span class="text-[var(--text-muted)] font-bold text-[10px] uppercase tracking-widest">Theme:</span>
+                    <div id="theme-toggle-mobile" class="theme-toggle-pill"><i class="fas fa-sun"></i><i class="fas fa-moon"></i><div class="thumb"></div></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-[var(--text-muted)] font-bold text-[10px] uppercase tracking-widest">Layout:</span>
+                    <button id="rtl-toggle-mobile" class="text-[10px] font-bold text-[var(--text-main)] border border-[var(--border-color)] px-2 py-1 hover:border-[var(--text-main)] bg-[var(--bg-card)]">LTR/RTL</button>
+                </div>
+            </div>
+            
+            <div class="flex flex-col gap-3 w-full">
+                <a href="login.html" class="btn btn-outline w-full !py-3">Client Login</a>
+                <a href="register.html" class="btn btn-solid w-full !py-3">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+    <section class="relative w-full h-[100svh] min-h-[600px] overflow-hidden flex flex-col items-center justify-center">
+        <div class="absolute inset-0 z-0 bg-black">
+            <img src="images/pexels-skylar-kang-6370041.jpg" alt="Antique Restoration Detail" class="w-full h-full object-cover object-center animate-zoom opacity-70" />
+            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-5xl mx-auto px-6 sm:px-12 flex flex-col items-center justify-center text-center mt-12">
+            <div class="flex items-center justify-center gap-4 mb-4 md:mb-6">
+                <div class="w-8 h-[2px] bg-[var(--accent-color)] hidden sm:block"></div>
+                <span class="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-white/80">Atelier Services</span>
+                <div class="w-8 h-[2px] bg-[var(--accent-color)] hidden sm:block"></div>
+            </div>
+            
+            <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-light leading-[1] md:leading-[0.95] mb-6 md:mb-8 text-white tracking-tight font-serif">
+                Sympathetic<br>
+                <span class="italic text-[var(--accent-color)]">Restoration.</span>
+            </h1>
+            
+            <p class="text-white/80 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto font-light mb-8 md:mb-10 px-4">
+                Discover the meticulous techniques and historically accurate materials our master craftsmen use to revive antique woodwork to its original glory.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center px-4">
+                <a href="#service-woodwork" class="btn btn-solid w-full sm:w-auto group !py-4 !px-8 sm:!px-10 !text-xs relative overflow-hidden flex justify-center items-center gap-3">
+                    <span class="relative z-10">View Process</span>
+                    <i class="fas fa-arrow-down transition-transform group-hover:translate-y-1 relative z-10"></i>
+                </a>
+                <a href="contact.html" class="btn border border-white/30 text-white hover:bg-white hover:text-black w-full sm:w-auto !py-4 !px-8 sm:!px-10 !text-xs backdrop-blur-sm transition-all">
+                    Request Consultation
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="service-woodwork" class="w-full py-20 lg:py-32 bg-[var(--bg-color)] border-b border-[var(--border-color)]">
+        <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+            
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent-color)] block mb-6">Our Methodology</span>
+            
+            <h2 class="text-3xl md:text-5xl font-light text-[var(--text-main)] font-serif tracking-tight mb-10">
+                The Art of <span class="italic text-[var(--text-muted)]">Preservation</span>
+            </h2>
+
+            <div class="space-y-8 md:space-y-10 text-base md:text-lg lg:text-xl font-light text-[var(--text-muted)] leading-relaxed md:leading-loose text-center">
+                <p>
+                    At VintageMart, we believe that true restoration is an act of profound respect. Sympathetic restoration is the delicate, highly considered practice of intervening only as much as necessary to ensure a piece’s survival and structural integrity, while fiercely protecting the historical patina it has earned over centuries. We do not seek to make an 18th-century credenza look as though it was built yesterday; rather, we strive to make it look like a perfectly cared-for masterpiece that has been loved for generations.
+                </p>
+
+                <p>
+                    The journey of every artifact in our atelier begins with a comprehensive historical and structural assessment. Our master craftsmen examine every joint, every veneer, and every layer of finish. We ask critical questions: Does this watermark tell a story of the piece's time in a Parisian café? Is the wear on the drawer pull a testament to decades of daily use? If the answer is yes, our mandate is to preserve, not to erase. We stabilize the wood, neutralize active deterioration, and leave the soul of the artifact intact.
+                </p>
+
+                <h3 class="text-2xl md:text-3xl font-serif text-[var(--text-main)] pt-6 pb-2">Rejecting Modernity for Authenticity</h3>
+
+                <p>
+                    A core tenet of sympathetic restoration is the absolute rejection of modern, synthetic materials. We refuse the use of rapid-setting epoxies, polyurethanes, or commercial spray lacquers. These modern shortcuts choke the natural breathing of antique wood and destroy the depth of original finishes. Instead, our artisans rely exclusively on era-appropriate materials. We utilize traditional hide glues that can be reversed by future restorers, hand-mixed shellacs, natural pigments, and carnauba waxes applied over countless hours of friction and warmth.
+                </p>
+                
+                <div class="w-full my-12 md:my-16">
+                    <div class="relative w-full h-[300px] md:h-[500px] border border-[var(--border-color)] bg-[var(--bg-card)] p-2 shadow-xl">
+                        <img src="images/pexels-pixabay-433200.jpg" alt="Antique Craftsmanship Tools" class="w-full h-full object-cover opacity-95 hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    <span class="block text-[10px] uppercase tracking-widest text-[var(--text-muted)] mt-4">Traditional tools used in our restoration atelier</span>
+                </div>
+
+                <p>
+                    The physical labor involved in this process cannot be rushed. It requires a meditative patience. French polishing, for instance, involves building up hundreds of microscopic layers of shellac using a traditional 'fad' or 'rubber'. It is a technique that demands the craftsman to read the wood, adjusting pressure and alcohol content dynamically. Similarly, repairing a shattered joint requires custom-carving matching antique timber, ensuring the grain orientation aligns perfectly so the repair becomes virtually invisible to the untrained eye.
+                </p>
+
+                <p>
+                    Beyond the aesthetics, sympathetic restoration is an environmental and historical imperative. By extending the life of these magnificent creations, we defy the modern culture of disposable furniture. We honor the original craftsmen who felled the timber, carved the legs, and joined the frames centuries ago.
+                </p>
+            </div>
+            
+        </div>
+    </section>
+
+    <section id="service-upholstery" class="w-full py-20 lg:py-32 bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
+        <div class="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+            
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent-color)] block mb-6">Textile Conservation</span>
+            
+            <h2 class="text-3xl md:text-5xl font-light text-[var(--text-main)] font-serif tracking-tight mb-10">
+                The Fabric of <span class="italic text-[var(--text-muted)]">Time</span>
+            </h2>
+
+            <div class="space-y-8 md:space-y-10 text-base md:text-lg lg:text-xl font-light text-[var(--text-muted)] leading-relaxed md:leading-loose text-center">
+                <p>
+                    While the wooden framework of an antique provides its structural soul, the upholstery dictates its comfort, aesthetic impact, and tactile relationship with the user. Antique upholstery is a highly specialized craft that diverges entirely from modern foam-and-staple manufacturing. At VintageMart, our textile conservation team approaches each piece not just as a seating surface, but as a historical canvas that must be treated with absolute precision.
+                </p>
+
+                <p>
+                    When a Victorian parlor chair or a Mid-Century Modern lounger arrives with deteriorated fabric, our first step is an archeological teardown. We carefully unpick original tacks to preserve the timber frame, documenting the internal layering of horsehair, coir (coconut fiber), and hessian. Whenever structurally viable, original 8-way hand-tied coil springs are retained, re-lashed with authentic jute webbing to recreate the exact seating tension the original designer intended.
+                </p>
+
+                <h3 class="text-2xl md:text-3xl font-serif text-[var(--text-main)] pt-6 pb-2">The Pursuit of Era-Accurate Textiles</h3>
+
+                <p>
+                    The selection of finishing fabric is where historical accuracy meets curatorial vision. We maintain exclusive relationships with heritage textile mills across Europe that still operate century-old looms. Whether sourcing a cut-velvet damask pattern appropriate for an 1860s settee, or a heavily textured, vibrant bouclé that perfectly encapsulates 1970s Danish modernism, we ensure the material respects the era of the artifact. 
+                </p>
+                
+                <div class="w-full my-12 md:my-16">
+                    <div class="relative w-full h-[300px] md:h-[500px] border border-[var(--border-color)] bg-[var(--bg-card)] p-2 shadow-xl">
+                        <img src="images/pexels-cottonbro-4778354.jpg" alt="Antique Upholstery Restoration" class="w-full h-full object-cover opacity-95 hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                    <span class="block text-[10px] uppercase tracking-widest text-[var(--text-muted)] mt-4">Meticulous hand-stitching in our textile atelier</span>
+                </div>
+
+                <p>
+                    We outright reject the use of modern polyurethane foam in antique pieces. Foam inevitably degrades, crumbling into a toxic dust that destroys both the fabric and the historical integrity of the piece. Instead, we rebuild the 'cake' of the seat using traditional stitched horsehair edges, cotton wadding, and muslin covers. This method not only guarantees exceptional, breathable comfort but ensures the piece will endure for another hundred years.
+                </p>
+
+                <p>
+                    The final result is an heirloom that feels as solid and luxurious today as the day it first left the master upholsterer's bench. It is an invitation to sit, to experience history physically, and to appreciate the enduring value of uncompromising craftsmanship.
+                </p>
+            </div>
+            
+            <div class="mt-16 pt-16 border-t border-[var(--border-color)]">
+                <a href="contact.html" class="btn btn-solid !py-4 !px-12 !text-xs shadow-lg hover:-translate-y-1 transition-transform">Schedule an Assessment</a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-10 pt-4">
+                <div class="lg:col-span-4">
+                    <a href="index.html" class="text-2xl lg:text-3xl font-black tracking-tighter mb-6 block" style="color: var(--accent-color); text-decoration: none; font-family: serif;">
+                        VintageMart
+                    </a>
+                    <p class="opacity-80 leading-relaxed text-sm mb-6 max-w-sm" style="color: var(--text-muted);">Sourcing the world’s most distinguished vintage and antique furniture. We preserve history by connecting extraordinary pieces with discerning collectors.</p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="social-link-circle"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link-circle"><i class="fab fa-pinterest-p"></i></a>
+                        <a href="#" class="social-link-circle"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                        <div>
+                            <h4>The Collection</h4>
+                            <ul class="space-y-3">
+                                <li><a href="#">Mid-Century Modern</a></li>
+                                <li><a href="#">Victorian Era</a></li>
+                                <li><a href="#">Art Deco</a></li>
+                                <li><a href="#">Rustic & Farmhouse</a></li>
+                                <li><a href="#">Newly Acquired</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Our Services</h4>
+                            <ul class="space-y-3">
+                                <li><a href="#">Provenance Verification</a></li>
+                                <li><a href="#">Restoration Details</a></li>
+                                <li><a href="#">White-Glove Delivery</a></li>
+                                <li><a href="#">Interior Curation</a></li>
+                                <li><a href="#">Consign with Us</a></li>
+                            </ul>
+                        </div>
+                        <div class="sm:col-span-2 md:col-span-1">
+                            <h4>Gallery & Contact</h4>
+                            <ul class="space-y-3 text-[var(--text-muted)] text-sm">
+                                <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 shrink-0" style="color: var(--accent-color);"></i><span>1890 Antique Row<br>Charleston, SC 29401</span></li>
+                                <li class="flex items-center"><i class="fas fa-phone mr-3 shrink-0" style="color: var(--accent-color);"></i><a href="tel:+15559876543" class="break-all">+1 (555) 987-6543</a></li>
+                                <li class="flex items-center"><i class="fas fa-envelope mr-3 shrink-0" style="color: var(--accent-color);"></i><a href="mailto:inquiries@vintagemart.com" class="break-all">inquiries@vintagemart.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom flex flex-col md:flex-row justify-between items-center text-sm gap-4">
+                <p style="color: var(--text-muted);">&copy; 2026 VintageMart Antiquities. All rights reserved.</p>
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <a href="#">Authenticity Guarantee</a>
+                    <a href="#">Shipping Policy</a>
+                    <a href="#">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const mobileBtn = document.getElementById('mobile-btn'); 
+        const fullscreenMenu = document.getElementById('fullscreen-menu'); 
+        const closeMenu = document.getElementById('close-menu'); 
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        
+        function toggleMenu() { 
+            fullscreenMenu.classList.toggle('active'); 
+            drawerOverlay.classList.toggle('active');
+            document.body.style.overflow = fullscreenMenu.classList.contains('active') ? 'hidden' : 'auto';
+        }
+        
+        mobileBtn.onclick = toggleMenu; 
+        closeMenu.onclick = toggleMenu; 
+        drawerOverlay.onclick = toggleMenu; 
+        
+        const themeDesktop = document.getElementById('theme-toggle-desktop');
+        const themeMobile = document.getElementById('theme-toggle-mobile'); 
+        const theme = localStorage.getItem('theme') || 'light';
+
+        function updateThemeUI(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode'); 
+                if(themeMobile) themeMobile.classList.add('active');
+            } else {
+                document.body.classList.remove('dark-mode');
+                if(themeMobile) themeMobile.classList.remove('active');
+            }
+        }
+        
+        updateThemeUI(theme === 'dark');
+        
+        function toggleTheme() { 
+            const isDark = !document.body.classList.contains('dark-mode');
+            updateThemeUI(isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light'); 
+        }
+        
+        themeDesktop.onclick = toggleTheme; 
+        if(themeMobile) themeMobile.onclick = toggleTheme;
+        
+        const rtlBtn = document.getElementById('rtl-btn'); 
+        const rtlMobile = document.getElementById('rtl-toggle-mobile'); 
+        const dir = localStorage.getItem('dir') || 'ltr';
+        
+        if (dir === 'rtl') { 
+            document.documentElement.dir = 'rtl'; 
+        }
+        
+        function toggleRTL() { 
+            const isRTL = document.documentElement.dir === 'rtl'; 
+            document.documentElement.dir = isRTL ? 'ltr' : 'rtl'; 
+            localStorage.setItem('dir', isRTL ? 'ltr' : 'rtl'); 
+        }
+        
+        rtlBtn.onclick = toggleRTL; 
+        if(rtlMobile) rtlMobile.onclick = toggleRTL;
+    </script>
+</body>
+</html>
