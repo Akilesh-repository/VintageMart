@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Client Registration | VintageMart</title>
-    <script src="tailwind.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/jpeg" href="images\vector-design-vintage-shop-icon-style_822882-413394.avif">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -88,13 +88,27 @@
         body.dark-mode .bg-glow-1 { background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 60%); }
         body.dark-mode .bg-glow-2 { background: radial-gradient(circle, rgba(212, 175, 55, 0.03) 0%, transparent 60%); }
 
+        /* TOP RIGHT CONTROLS */
+        .top-right-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 50;
+        }
+
         /* RTL SUPPORT */
         [dir="rtl"] { text-align: right; }
         [dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
         [dir="rtl"] .mr-3 { margin-left: 0.75rem; margin-right: 0; }
         [dir="rtl"] .input-icon { left: auto; right: 16px; }
         [dir="rtl"] .input-field { padding: clamp(8px, 2vh, 12px) 44px clamp(8px, 2vh, 12px) 16px !important; }
+        [dir="rtl"] .input-field.has-eye { padding: clamp(8px, 2vh, 12px) 44px clamp(8px, 2vh, 12px) 44px !important; }
         [dir="rtl"] .btn-icon { margin-left: 0; margin-right: 8px; transform: rotate(180deg); }
+        [dir="rtl"] .top-right-controls { right: auto; left: 20px; }
+        [dir="rtl"] .password-toggle-icon { right: auto; left: 16px; }
 
         /* REGISTRATION CARD */
         .login-card {
@@ -144,8 +158,22 @@
         .form-group label { font-size: 0.65rem; font-weight: 700; color: var(--form-text); margin: 0; text-transform: uppercase; letter-spacing: 1px; padding-left: 4px; }
         
         .input-wrapper { position: relative; }
-        .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--input-icon); font-size: 0.85rem; transition: color 0.3s; }
+        .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--input-icon); font-size: 0.85rem; transition: color 0.3s; pointer-events: none; }
         
+        .password-toggle-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--input-icon);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 2;
+        }
+
+        .password-toggle-icon:hover { color: var(--accent-color); }
+
         .input-field {
             width: 100%;
             padding: clamp(8px, 1.8vh, 12px) 16px clamp(8px, 1.8vh, 12px) 44px;
@@ -158,6 +186,11 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             margin: 0;
         }
+        
+        .input-field.has-eye {
+            padding-right: 44px; /* Ensure text doesn't flow under the eye icon */
+        }
+
         .input-field::placeholder { color: var(--input-icon); opacity: 0.7; font-weight: 400; }
         .input-field:focus { 
             outline: none; 
@@ -229,7 +262,7 @@
             color: #FFFFFF;
         }
         body.dark-mode .social-btn:hover {
-            color: var(--bg-card);
+            color: var(--bg-page);
         }
 
         /* FOOTER LINKS */
@@ -237,23 +270,15 @@
         .login-link a { color: var(--accent-color); font-weight: 700; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.3s; }
         .login-link a:hover { border-bottom-color: var(--accent-color); }
 
-        /* BOTTOM CONTROLS */
-        .bottom-controls {
-            padding-top: clamp(8px, 1.5vh, 12px);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .toggle { width: 40px; height: 20px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
-        .toggle::before { content: ''; position: absolute; width: 14px; height: 14px; background: var(--text-muted); border-radius: 50%; top: 2px; left: 3px; transition: 0.3s; }
-        body.dark-mode .toggle { background: var(--bg-secondary); border-color: var(--border-color); }
-        body.dark-mode .toggle::before { left: 21px; background: var(--accent-color); }
+        /* CONTROLS TOGGLE STYLES */
+        .toggle { width: 40px; height: 20px; background: transparent; border: 1px solid var(--form-text); border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
+        .toggle::before { content: ''; position: absolute; width: 12px; height: 12px; background: var(--form-text); border-radius: 50%; top: 3px; left: 4px; transition: 0.3s; }
+        body.dark-mode .toggle { border-color: var(--form-text); }
+        body.dark-mode .toggle::before { left: 22px; background: var(--accent-color); }
         
-        .btn-text { font-size: 0.6rem; font-weight: 700; color: var(--form-muted); background: transparent; border: 1px solid var(--border-color); padding: 4px 10px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-text:hover { color: var(--text-main); border-color: var(--text-main); }
+        .btn-text { font-size: 0.6rem; font-weight: 700; color: var(--form-text); background: transparent; border: 1px solid var(--form-text); padding: 4px 10px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-text:hover { color: var(--accent-color); border-color: var(--accent-color); }
+
 
         /* =========================================
            ULTRA-COMPACT MOBILE & LANDSCAPE TABLET (1024x600) OPTIMIZATIONS 
@@ -268,9 +293,13 @@
             .form-group { gap: 2px !important; }
             .form-group label { font-size: 0.6rem !important; }
             .input-field { padding: 8px 12px 8px 36px !important; font-size: 0.75rem !important; height: 38px !important; }
+            .input-field.has-eye { padding: 8px 36px 8px 36px !important; }
             .input-icon { font-size: 0.8rem !important; left: 12px !important; }
+            .password-toggle-icon { font-size: 0.8rem !important; right: 12px !important; }
             [dir="rtl"] .input-field { padding: 8px 36px 8px 12px !important; }
+            [dir="rtl"] .input-field.has-eye { padding: 8px 36px 8px 36px !important; }
             [dir="rtl"] .input-icon { right: 12px !important; left: auto !important; }
+            [dir="rtl"] .password-toggle-icon { right: auto !important; left: 12px !important; }
             
             .utility-row { margin: 0 !important; }
             .utility-row span { font-size: 0.6rem !important; }
@@ -278,7 +307,6 @@
             .auth-btn { height: 38px !important; padding: 0 !important; font-size: 0.7rem !important; margin-top: 0 !important; }
             .social-btn { width: 36px !important; height: 36px !important; font-size: 0.85rem !important; }
             .login-link { font-size: 0.65rem !important; margin-bottom: 0 !important; margin-top: 0 !important;}
-            .bottom-controls { padding-top: 8px !important; gap: 12px !important; }
         }
 
         /* SPECIFIC FIX FOR SHORT SCREENS (e.g. 1024x600 tablet landscape) */
@@ -299,9 +327,13 @@
             .form-group label { font-size: 0.55rem !important; margin-bottom: 2px !important; }
             
             .input-field { padding: 6px 10px 6px 30px !important; font-size: 0.7rem !important; height: 32px !important; border-radius: 0 !important; }
+            .input-field.has-eye { padding: 6px 30px 6px 30px !important; }
             .input-icon { left: 10px !important; font-size: 0.7rem !important; }
+            .password-toggle-icon { right: 10px !important; font-size: 0.7rem !important; }
             [dir="rtl"] .input-field { padding: 6px 30px 6px 10px !important; }
+            [dir="rtl"] .input-field.has-eye { padding: 6px 30px 6px 30px !important; }
             [dir="rtl"] .input-icon { right: 10px !important; left: auto !important; }
+            [dir="rtl"] .password-toggle-icon { right: auto !important; left: 10px !important; }
             
             .utility-row { margin: 0 !important; }
             .utility-row span { font-size: 0.55rem !important; }
@@ -317,7 +349,8 @@
             .social-btn { width: 30px !important; height: 30px !important; font-size: 0.75rem !important; }
             
             .login-link { font-size: 0.6rem !important; margin-top: 0 !important; }
-            .bottom-controls { display: none !important; } 
+            .top-right-controls { top: 10px; right: 10px; }
+            [dir="rtl"] .top-right-controls { left: 10px; right: auto; }
         }
     </style>
 </head>
@@ -325,6 +358,16 @@
 
     <div class="bg-glow-1"></div>
     <div class="bg-glow-2"></div>
+
+    <!-- MOVED TO TOP RIGHT -->
+    <div class="top-right-controls">
+        <div class="flex items-center gap-2" style="cursor: pointer;" onclick="document.getElementById('theme-toggle').click()">
+            <i class="fas fa-sun text-[10px]" style="color: var(--form-text);"></i>
+            <div class="toggle" id="theme-toggle"></div>
+            <i class="fas fa-moon text-[10px]" style="color: var(--form-text);"></i>
+        </div>
+        <button id="rtl-toggle" class="btn-text">LTR / RTL</button>
+    </div>
 
     <div class="login-card">
 
@@ -359,16 +402,18 @@
             <div class="form-group">
                 <label for="password">Password</label>
                 <div class="input-wrapper">
-                    <input type="password" id="password" class="input-field" placeholder="••••••••" required>
+                    <input type="password" id="password" class="input-field has-eye" placeholder="••••••••" required>
                     <i class="fas fa-lock input-icon"></i>
+                    <i class="fas fa-eye password-toggle-icon" id="togglePassword"></i>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="confirm-password">Confirm Password</label>
                 <div class="input-wrapper">
-                    <input type="password" id="confirm-password" class="input-field" placeholder="••••••••" required>
+                    <input type="password" id="confirm-password" class="input-field has-eye" placeholder="••••••••" required>
                     <i class="fas fa-lock input-icon"></i>
+                    <i class="fas fa-eye password-toggle-icon" id="toggleConfirmPassword"></i>
                 </div>
             </div>
 
@@ -395,19 +440,25 @@
         <div class="login-link">
             Already a member? <a href="login.html">Sign In</a>
         </div>
-
-        <div class="bottom-controls">
-            <div class="flex items-center gap-2" style="cursor: pointer;" onclick="document.getElementById('theme-toggle').click()">
-                <i class="fas fa-sun text-[10px]" style="color: var(--form-muted);"></i>
-                <div class="toggle" id="theme-toggle"></div>
-                <i class="fas fa-moon text-[10px]" style="color: var(--form-muted);"></i>
-            </div>
-            <button id="rtl-toggle" class="btn-text">LTR / RTL</button>
-        </div>
-
     </div>
 
     <script>
+        // --- PASSWORD REVEAL LOGIC ---
+        function setupPasswordToggle(toggleId, inputId) {
+            const toggleElement = document.getElementById(toggleId);
+            const inputElement = document.getElementById(inputId);
+            
+            toggleElement.addEventListener('click', function () {
+                const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+                inputElement.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        setupPasswordToggle('togglePassword', 'password');
+        setupPasswordToggle('toggleConfirmPassword', 'confirm-password');
+
         // --- THEME LOGIC ---
         const themeToggle = document.getElementById('theme-toggle');
         const savedTheme = localStorage.getItem('theme') || 'light';
